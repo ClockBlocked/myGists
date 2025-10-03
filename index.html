@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full" data-theme="dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Gist Gallery · clockblocked — Dark Dimmed</title>
+        <!-- Tailwind CDN (no build step) -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        colors: {
+                            // GitHub Dark Dimmed color palette
+                            canvas: {
+                                DEFAULT: "#4a535d",
+                                subtle: "#2d333b",
+                                inset: "#1c2128",
+                            },
+                            fg: {
+                                DEFAULT: "#adbac7",
+                                muted: "#768390",
+                                subtle: "#636e7b",
+                                emphasis: "#cdd9e5",
+                            },
+                            border: {
+                                DEFAULT: "#444c56",
+                                muted: "#373e47",
+                            },
+                            accent: {
+                                DEFAULT: "#539bf5",
+                            },
+                            success: "#57ab5a",
+                            danger: "#e5534b",
+                            attention: "#c69026",
+                        },
+                        fontFamily: {
+                            sans: ["-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Open Sans", "Helvetica Neue", "sans-serif"],
+                        },
+                    },
+                },
+            };
+        </script>
+        <link rel="preconnect" href="https://avatars.githubusercontent.com" crossorigin />
+        <!-- Octicons (SVG will be inlined via <svg>) -->
+        <!-- Highlight.js (GitHub Dark Dimmed theme) -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js" defer></script>
+        <!-- Utilities -->
+        <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
+        <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg" />
+        <style>
+            :root {
+                color-scheme: dark;
+            }
+            html,
+            body {
+                height: 100%;
+            }
+            .gh-container {
+                background: theme(colors.canvas.DEFAULT);
+                color: theme(colors.fg.default);
+            }
+            .gh-border {
+                border-color: #545d68;
+            }
+            .gh-card {
+                background: theme(colors.canvas.subtle);
+            }
+            .gh-header {
+                backdrop-filter: saturate(180%) blur(8px);
+                background: rgba(34, 39, 46, 0.85);
+            }
+            .gh-link {
+                color: theme(colors.fg.muted);
+            }
+            .gh-link:hover {
+                color: theme(colors.accent.DEFAULT);
+                text-decoration: underline;
+            }
+            .code-actions button {
+                opacity: 0.85;
+            }
+            .code-actions button:hover {
+                opacity: 1;
+            }
+            /* Top progress bar */
+            #topProgress {
+                height: 3px;
+                background: theme(colors.accent.DEFAULT);
+                width: 0;
+                transition: width 0.2s ease;
+            }
+            .skeleton {
+                background: linear-gradient(90deg, rgba(255, 255, 255, 0.06) 25%, rgba(255, 255, 255, 0.12) 37%, rgba(255, 255, 255, 0.06) 63%);
+                background-size: 400% 100%;
+                animation: shimmer 1.4s ease infinite;
+            }
+            @keyframes shimmer {
+                0% {
+                    background-position: 100% 0;
+                }
+
+                100% {
+                    background-position: 0 0;
+                }
+            }
+            /* Scrollbars */
+            * {
+                scrollbar-width: thin;
+                scrollbar-color: #57606a #1f242b;
+            }
+            *::-webkit-scrollbar {
+                height: 10px;
+                width: 10px;
+            }
+            *::-webkit-scrollbar-thumb {
+                background: #57606a;
+                border-radius: 8px;
+            }
+            *::-webkit-scrollbar-track {
+                background: #1f242b;
+            }
+          
+          
+          
+          
+          
+          
+          
+          body {
+  background: #212830 !important;
+}
+
+.gh-card {
+  background: transparent;
+}
+
+#filesWrap header {
+  background: #262c36;
+}
+
+code {
+  font-size: 0.65rem !important;
+}
+        </style>
+    </head>
+    <body class="gh-container">
+        <!-- Top bar -->
+        <header class="gh-header sticky top-0 z-50 border-b gh-border">
+            <div id="topProgress"></div>
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center gap-4 h-14">
+                <a href="#/" class="flex items-center gap-2 font-semibold text-fg-emphasis">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path
+                            d="M12 1C5.92 1 1 5.92 1 12c0 4.87 3.15 8.98 7.52 10.44.55.1.76-.23.76-.52 0-.26-.01-1.13-.01-2.05-2.77.51-3.48-.67-3.7-1.29-.12-.32-.66-1.29-1.13-1.55-.38-.21-.94-.72-.01-.73.87-.01 1.49.8 1.69 1.13.99 1.66 2.57 1.2 3.2.91.1-.71.39-1.19.7-1.47-2.45-.27-5.01-1.22-5.01-5.43 0-1.2.43-2.19 1.13-2.96-.11-.28-.49-1.4.11-2.92 0 0 .92-.29 3.02 1.13.87-.25 1.81-.37 2.75-.37.94 0 1.81.12 2.75.37 2.1-1.43 3.03-1.13 3.03-1.13.61 1.51.22 2.64.11 2.92.7.77 1.13 1.75 1.13 2.96 0 4.22-2.57 5.16-5.02 5.43.4.34.74 1 .74 2.03 0 1.47-.01 2.65-.01 3.02 0 .29.21.63.76.52C19.85 20.98 23 16.85 23 12c0-6.08-4.92-11-11-11Z"
+                        />
+                    </svg>
+                    <span class="hidden sm:block">Gist</span>
+                </a>
+                <nav class="ml-2 text-sm text-fg-muted flex items-center gap-3">
+                    <a href="#/" class="gh-link">All gists</a>
+                    <span class="opacity-40">•</span>
+                    <a class="gh-link" href="https://github.com" target="_blank" rel="noopener">Back to GitHub</a>
+                </nav>
+                <div class="ml-auto flex items-center gap-2">
+                    <div class="relative">
+                        <input
+                            id="searchInput"
+                            class="w-64 rounded-md border gh-border bg-canvas-subtle px-3 py-1.5 text-sm text-fg-default placeholder:opacity-60 focus:outline-none focus:ring-2 focus:ring-accent"
+                            placeholder="Search gists… (filename, desc, language)"
+                        />
+                        <div class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-fg-muted">
+                            ⌘/
+                        </div>
+                    </div>
+                    <a href="https://gist.github.com/clockblocked" target="_blank" class="inline-flex items-center gap-2 rounded-md border gh-border px-2.5 py-1.5 text-sm text-fg-default hover:bg-canvas-subtle">Profile</a>
+                </div>
+            </div>
+        </header>
+        <!-- Main -->
+        <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Sidebar Filters -->
+            <aside class="lg:col-span-3 space-y-4">
+                <section class="gh-card rounded-lg border gh-border p-4">
+                    <h2 class="text-sm font-semibold text-fg-emphasis mb-3">Filters</h2>
+                    <div class="space-y-3 text-sm">
+                        <div>
+                            <label class="block mb-1 text-fg-muted">Language</label>
+                            <select id="langFilter" class="w-full rounded-md border gh-border bg-canvas-subtle px-2 py-1.5">
+                                <option value="">Any</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between gap-2">
+                            <label class="text-fg-muted">Only with description</label>
+                            <input id="descFilter" type="checkbox" class="h-4 w-4" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-fg-muted">Sort</label>
+                            <select id="sortSelect" class="w-full rounded-md border gh-border bg-canvas-subtle px-2 py-1.5">
+                                <option value="updated">Recently updated</option>
+                                <option value="created">Recently created</option>
+                                <option value="files">Most files</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+                <section class="gh-card rounded-lg border gh-border p-4">
+                    <h2 class="text-sm font-semibold text-fg-emphasis mb-3">About</h2>
+                    <p class="text-sm text-fg-muted">Unofficial Gist viewer styled to match <em>GitHub: Dark Dimmed</em>. Data is fetched from the public GitHub API.</p>
+                </section>
+            </aside>
+            <!-- List / Detail Router Outlet -->
+            <section id="routerOutlet" class="lg:col-span-9 min-h-[60vh]"></section>
+        </main>
+        <footer class="border-t gh-border py-6 text-center text-sm text-fg-muted">Built for <strong>clockblocked</strong> · Not affiliated with GitHub</footer>
+        <!-- Templates -->
+        <template id="gistCardTpl">
+            <article class="gh-card rounded-lg border gh-border p-4 hover:shadow-card transition-shadow">
+                <a class="block group" href="#">
+                    <header class="flex items-start gap-3">
+                        <img class="h-8 w-8 rounded-full ring-1 ring-border-muted" alt="avatar" />
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2">
+                                <h3 class="truncate font-medium text-fg-emphasis group-hover:underline"></h3>
+                                <span class="rounded-full border gh-border px-2 py-0.5 text-xs text-fg-muted"></span>
+                            </div>
+                            <p class="text-sm text-fg-muted truncate"></p>
+                            <div class="mt-1 text-xs text-fg-muted flex items-center gap-3">
+                                <span class="files"></span>
+                                <span class="comments"></span>
+                                <span class="updated"></span>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="mt-3 flex flex-wrap gap-2 languages"></div>
+                </a>
+            </article>
+        </template>
+        <template id="listTpl">
+            <div>
+                <h1 class="mb-4 text-lg font-semibold">clockblocked / <span class="text-fg-muted">All Gists</span></h1>
+                <div id="listGrid" class="grid gap-4 sm:grid-cols-2">
+                    <!-- cards here -->
+                </div>
+                <div id="listEmpty" class="hidden mt-10 text-center text-fg-muted">
+                    No gists match your filters.
+                </div>
+                <div class="mt-6 flex items-center justify-center">
+                    <button id="loadMoreBtn" class="rounded-md border gh-border px-4 py-2 text-sm hover:bg-canvas-subtle">Load more</button>
+                </div>
+            </div>
+        </template>
+        <template id="detailTpl">
+            <div>
+                <nav class="mb-4 text-sm">
+                    <a href="#/" class="gh-link">clockblocked</a>
+                    <span class="opacity-40">/</span>
+                    <span class="text-fg-muted">gist</span>
+                </nav>
+                <header class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="min-w-0">
+                        <h1 class="truncate text-lg font-semibold" id="gistTitle">Gist</h1>
+                        <div class="text-xs text-fg-muted" id="gistMeta"></div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a id="viewOnGH" target="_blank" rel="noopener" class="rounded-md border gh-border px-3 py-1.5 text-sm hover:bg-canvas-subtle">View on GitHub</a>
+                        <button id="copyClone" class="rounded-md border gh-border px-3 py-1.5 text-sm hover:bg-canvas-subtle">Copy clone URL</button>
+                    </div>
+                </header>
+                <div id="filesWrap" class="space-y-6">
+                    <!-- file blocks -->
+                </div>
+
+                <div id="revisionsWrap" class="mt-8">
+                    <h2 class="text-sm font-semibold mb-2">Revisions</h2>
+                    <div id="revisionsList" class="text-sm text-fg-muted">
+                        Loading…
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template id="fileBlockTpl">
+            <section class="overflow-hidden rounded-lg border gh-border">
+                <header class="flex items-center justify-between bg-canvas-inset/60 px-3 py-2">
+                    <div class="min-w-0 truncate text-sm">
+                        <strong class="text-fg-emphasis file-name"></strong>
+                        <span class="ml-2 text-fg-muted">• <span class="lang"></span> • <span class="size"></span></span>
+                    </div>
+                    <div class="code-actions flex items-center gap-2">
+                        <button class="rounded-md border gh-border px-2 py-1 text-xs" data-action="raw">Raw</button>
+                        <button class="rounded-md border gh-border px-2 py-1 text-xs" data-action="copy">Copy</button>
+                        <button class="rounded-md border gh-border px-2 py-1 text-xs" data-action="wrap">Toggle wrap</button>
+                        <a class="rounded-md border gh-border px-2 py-1 text-xs" target="_blank" rel="noopener" data-action="download">Download</a>
+                    </div>
+                </header>
+                <pre class="m-0 max-h-[70vh] overflow-auto"><code class="block p-4 text-sm hljs"></code></pre>
+            </section>
+        </template>
+        <!-- App Script -->
+        <script>
+            // --- Utilities ---
+            async function ensureHLJS() {
+                if (window.hljs) return;
+                await new Promise((resolve) => {
+                    const s = document.createElement("script");
+                    s.src = "https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/common.min.js";
+                    s.onload = resolve;
+                    s.onerror = resolve; // don't hard-fail
+                    document.head.appendChild(s);
+                });
+            }
+            dayjs.extend(window.dayjs_plugin_relativeTime);
+            const $ = (sel, ctx = document) => ctx.querySelector(sel);
+            const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+
+            const topBar = {
+                el: () => document.getElementById("topProgress"),
+                start() {
+                    const el = this.el();
+                    el.style.width = "0%";
+                    el.style.opacity = "1";
+                    setTimeout(() => {
+                        el.style.width = "60%";
+                    }, 40);
+                },
+                step(p) {
+                    this.el().style.width = p + "%";
+                },
+                done() {
+                    const el = this.el();
+                    el.style.width = "100%";
+                    setTimeout(() => {
+                        el.style.opacity = "0";
+                        el.style.width = "0%";
+                    }, 300);
+                },
+            };
+
+            const api = {
+                base: "https://api.github.com",
+                user: "antagoniise",
+                async listGists(page = 1, per_page = 12) {
+                    const url = `${this.base}/users/${this.user}/gists?page=${page}&per_page=${per_page}`;
+                    const res = await fetch(url, {
+                        headers: {
+                            Accept: "application/vnd.github+json",
+                        },
+                    });
+                    if (!res.ok) throw new Error("Failed to fetch gists");
+                    const data = await res.json();
+                    return {
+                        data,
+                        hasMore: data.length === per_page,
+                    };
+                },
+                async getGist(id) {
+                    const res = await fetch(`${this.base}/gists/${id}`, {
+                        headers: {
+                            Accept: "application/vnd.github+json",
+                        },
+                    });
+                    if (!res.ok) throw new Error("Failed to fetch gist");
+                    return await res.json();
+                },
+                async getRevisions(id) {
+                    const res = await fetch(`${this.base}/gists/${id}/commits`, {
+                        headers: {
+                            Accept: "application/vnd.github+json",
+                        },
+                    });
+                    if (!res.ok) return [];
+                    return await res.json();
+                },
+            };
+
+            // --- State ---
+            const state = {
+                page: 1,
+                hasMore: true,
+                cache: new Map(),
+                // id -> gist
+                filters: {
+                    q: "",
+                    lang: "",
+                    onlyDesc: false,
+                    sort: "updated",
+                },
+            };
+
+            // --- Router ---
+            function parseRoute() {
+                const h = location.hash.slice(1);
+                if (!h || h === "/")
+                    return {
+                        view: "list",
+                    };
+                const m = h.match(/^\/gist\/([a-f0-9]+)$/i);
+                if (m)
+                    return {
+                        view: "detail",
+                        id: m[1],
+                    };
+                return {
+                    view: "list",
+                };
+            }
+
+            window.addEventListener("hashchange", render);
+
+            // --- List View ---
+            async function renderList(initial = false) {
+                topBar.start();
+                const outlet = document.getElementById("routerOutlet");
+                outlet.innerHTML = document.getElementById("listTpl").innerHTML;
+                const grid = document.getElementById("listGrid");
+                const empty = document.getElementById("listEmpty");
+                const btnMore = document.getElementById("loadMoreBtn");
+
+                if (initial) {
+                    state.page = 1;
+                    state.hasMore = true;
+                    grid.innerHTML = "";
+                }
+
+                try {
+                    const { data, hasMore } = await api.listGists(state.page);
+                    state.hasMore = hasMore;
+                    const cards = data.map((g) => buildGistCard(g));
+                    if (cards.length === 0 && state.page === 1) {
+                        empty.classList.remove("hidden");
+                    }
+                    cards.forEach((card) => grid.appendChild(card));
+                    btnMore.style.display = state.hasMore ? "" : "none";
+                } catch (e) {
+                    grid.innerHTML = `<div class='text-center text-danger'>${e.message}</div>`;
+                } finally {
+                    topBar.done();
+                }
+
+                // Filters & search
+                document.getElementById("searchInput").addEventListener("input", (e) => {
+                    state.filters.q = e.target.value.trim().toLowerCase();
+                    filterCards();
+                });
+                document.getElementById("langFilter").addEventListener("change", (e) => {
+                    state.filters.lang = e.target.value;
+                    filterCards();
+                });
+                document.getElementById("descFilter").addEventListener("change", (e) => {
+                    state.filters.onlyDesc = e.target.checked;
+                    filterCards();
+                });
+                document.getElementById("sortSelect").addEventListener("change", (e) => {
+                    state.filters.sort = e.target.value;
+                    sortCards();
+                });
+
+                btnMore.onclick = () => {
+                    state.page++;
+                    renderList(false);
+                };
+            }
+
+            function buildGistCard(g) {
+                // Track languages for filter menu
+                const langs = Object.values(g.files)
+                    .map((f) => f.language)
+                    .filter(Boolean);
+                langs.forEach((l) => languages.add(l));
+
+                const tpl = document.getElementById("gistCardTpl");
+                const node = tpl.content.firstElementChild.cloneNode(true);
+                const anchor = node.querySelector("a");
+                const avatar = node.querySelector("img");
+                const title = node.querySelector("h3");
+                const desc = node.querySelector("p");
+                const badge = node.querySelector("span.rounded-full");
+                const files = node.querySelector(".files");
+                const comments = node.querySelector(".comments");
+                const updated = node.querySelector(".updated");
+                const langWrap = node.querySelector(".languages");
+
+                avatar.src = (g.owner && g.owner.avatar_url) || `https://avatars.githubusercontent.com/u/0?v=4`;
+                avatar.alt = (g.owner && g.owner.login) || "user";
+
+                const primaryFile = Object.values(g.files)[0];
+                title.textContent = primaryFile ? primaryFile.filename : g.id;
+                desc.textContent = g.description || "";
+                badge.textContent = g.public ? "Public" : "Secret";
+
+                files.textContent = `${Object.keys(g.files).length} file${Object.keys(g.files).length > 1 ? "s" : ""}`;
+                comments.textContent = `${g.comments} comment${g.comments !== 1 ? "s" : ""}`;
+                updated.textContent = `Updated ${dayjs(g.updated_at).fromNow()}`;
+
+                // Language pills
+                const uniqueLangs = [...new Set(langs)];
+                uniqueLangs.forEach((l) => {
+                    const pill = document.createElement("span");
+                    pill.className = "inline-flex items-center gap-1 rounded-full border gh-border px-2 py-0.5 text-xs text-fg-muted";
+                    pill.textContent = l;
+                    langWrap.appendChild(pill);
+                });
+
+                anchor.href = `#/gist/${g.id}`;
+                anchor.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    location.hash = `#/gist/${g.id}`;
+                });
+                node.dataset.updated = g.updated_at;
+                node.dataset.created = g.created_at;
+                node.dataset.files = Object.keys(g.files).length;
+                node.dataset.langs = uniqueLangs.join(",");
+                node.dataset.desc = g.description ? "1" : "0";
+                node.dataset.search = [title.textContent, g.description || "", uniqueLangs.join(" ")].join(" ").toLowerCase();
+
+                // Cache minimal
+                state.cache.set(g.id, {
+                    id: g.id,
+                    url: g.html_url,
+                });
+                queuePopulateFilters();
+                return node;
+            }
+
+            // Filtering/sorting for cards (client-side)
+            function filterCards() {
+                const grid = document.getElementById("listGrid");
+                const children = Array.from(grid.children);
+                const { q, lang, onlyDesc } = state.filters;
+                let visible = 0;
+                children.forEach((card) => {
+                    const okQ = !q || card.dataset.search.includes(q);
+                    const okLang = !lang || (card.dataset.langs && card.dataset.langs.split(",").includes(lang));
+                    const okDesc = !onlyDesc || card.dataset.desc === "1";
+                    const show = okQ && okLang && okDesc;
+                    card.style.display = show ? "" : "none";
+                    if (show) visible++;
+                });
+                document.getElementById("listEmpty").classList.toggle("hidden", visible > 0);
+                sortCards();
+            }
+
+            function sortCards() {
+                const grid = document.getElementById("listGrid");
+                const { sort } = state.filters;
+                const cards = Array.from(grid.children).filter((el) => el.style.display !== "none");
+                const by = {
+                    updated: (a, b) => new Date(b.dataset.updated) - new Date(a.dataset.updated),
+                    created: (a, b) => new Date(b.dataset.created) - new Date(a.dataset.created),
+                    files: (a, b) => +b.dataset.files - +a.dataset.files,
+                }[sort];
+                cards.sort(by).forEach((c) => grid.appendChild(c));
+            }
+
+            // Language filter menu population (debounced)
+            const languages = new Set();
+            let langTimer;
+            function queuePopulateFilters() {
+                clearTimeout(langTimer);
+                langTimer = setTimeout(populateLangMenu, 50);
+            }
+            function populateLangMenu() {
+                const sel = document.getElementById("langFilter");
+                const current = sel.value;
+                const list = Array.from(languages)
+                    .filter(Boolean)
+                    .sort((a, b) => a.localeCompare(b));
+                sel.innerHTML = '<option value="">Any</option>' + list.map((l) => `<option>${l}</option>`).join("");
+                sel.value = current;
+            }
+
+            // --- Detail View ---
+            async function renderDetail(id) {
+                topBar.start();
+                const outlet = document.getElementById("routerOutlet");
+                outlet.innerHTML = document.getElementById("detailTpl").innerHTML;
+
+                try {
+                    const gist = await api.getGist(id);
+                    const title = $("#gistTitle");
+                    const meta = $("#gistMeta");
+                    const filesWrap = $("#filesWrap");
+                    const gh = gist.html_url;
+
+                    title.textContent = Object.values(gist.files)[0]?.filename || gist.id;
+                    meta.textContent = `${gist.owner?.login ?? "user"} • ${gist.public ? "Public" : "Secret"} • Updated ${dayjs(gist.updated_at).fromNow()}`;
+                    $("#viewOnGH").href = gh;
+                    $("#copyClone").onclick = () => {
+                        const url = `git@gist.github.com:${gist.id}.git`;
+                        navigator.clipboard.writeText(url);
+                        notify("Clone URL copied");
+                    };
+
+                    // Files
+                    filesWrap.innerHTML = "";
+                    for (const [name, file] of Object.entries(gist.files)) {
+                        const block = document.getElementById("fileBlockTpl").content.firstElementChild.cloneNode(true);
+                        block.querySelector(".file-name").textContent = name;
+                        block.querySelector(".lang").textContent = file.language || "Plain text";
+                        block.querySelector(".size").textContent = humanSize(file.size);
+                        const codeEl = block.querySelector("code");
+                        codeEl.textContent = file.content ?? "Loading…";
+
+                        // If content not provided (large files), fetch raw
+                        if (!file.content && file.raw_url) {
+                            try {
+                                const res = await fetch(file.raw_url);
+                                codeEl.textContent = await res.text();
+                            } catch {
+                                codeEl.textContent = "Failed to load raw";
+                            }
+                        }
+
+                        // Language class for HLJS
+                        const langClass = langToHLJS(file.language);
+                        if (langClass) codeEl.classList.add(langClass);
+                        if (window.hljs) {
+                            hljs.highlightElement(codeEl);
+                        }
+
+                        // Actions
+                        block.querySelector('[data-action="raw"]').onclick = () => window.open(file.raw_url, "_blank");
+                        block.querySelector('[data-action="download"]').href = file.raw_url;
+                        block.querySelector('[data-action="copy"]').onclick = () => {
+                            navigator.clipboard.writeText(codeEl.textContent);
+                            notify("Code copied");
+                        };
+                        block.querySelector('[data-action="wrap"]').onclick = () => {
+                            const pre = block.querySelector("pre");
+                            pre.classList.toggle("whitespace-pre-wrap");
+                        };
+
+                        filesWrap.appendChild(block);
+                    }
+
+                    // Revisions
+                    const revs = await api.getRevisions(id);
+                    const list = revs
+                        .map((r) => {
+                            const date = dayjs(r.committed_at).fromNow();
+                            return `<div class='flex items-center justify-between border-b gh-border py-2'>
+<div class='text-sm'>${r.user?.login ?? "user"} <span class='text-fg-muted'>committed</span> ${date}</div>
+<a class='gh-link' href='${r.url}' target='_blank' rel='noopener'>View</a>
+</div>`;
+                        })
+                        .join("");
+                    $("#revisionsList").innerHTML = list || '<span class="text-fg-muted">No revisions.</span>';
+                } catch (e) {
+                    outlet.innerHTML = `<div class='rounded-lg border gh-border p-6 text-center text-danger'>${e.message}</div>`;
+                } finally {
+                    topBar.done();
+                }
+            }
+
+            // --- Small helpers ---
+            function humanSize(bytes) {
+                if (bytes < 1024) return bytes + " B";
+                const units = ["KB", "MB", "GB"];
+                let i = -1;
+                do {
+                    bytes /= 1024;
+                    i++;
+                } while (bytes >= 1024 && i < units.length - 1);
+                return bytes.toFixed(1) + " " + units[i];
+            }
+            function langToHLJS(lang) {
+                if (!lang) return "";
+                const map = {
+                    JavaScript: "language-javascript",
+                    TypeScript: "language-typescript",
+                    Python: "language-python",
+                    CSS: "language-css",
+                    HTML: "language-xml",
+                    XML: "language-xml",
+                    Markdown: "language-markdown",
+                    JSON: "language-json",
+                    YAML: "language-yaml",
+                    Shell: "language-bash",
+                    Bash: "language-bash",
+                    PHP: "language-php",
+                    Ruby: "language-ruby",
+                    Go: "language-go",
+                };
+                return map[lang] || "";
+            }
+
+            function notify(text) {
+                const n = document.createElement("div");
+                n.className = "fixed bottom-4 right-4 z-[60] rounded-md border gh-border bg-canvas-subtle px-3 py-2 text-sm shadow-card";
+                n.textContent = text;
+                document.body.appendChild(n);
+                setTimeout(() => n.remove(), 1600);
+            }
+
+            // --- Render ---
+            async function render() {
+                const route = parseRoute();
+                if (route.view === "detail") await renderDetail(route.id);
+                else await renderList(true);
+            }
+
+            // Keyboard focus shortcut for search
+            window.addEventListener("keydown", (e) => {
+                if ((e.metaKey || e.ctrlKey) && e.key === "/") $("#searchInput")?.focus();
+            });
+
+            // Initialize
+            render();
+        </script>
+        
+        
+        
+        <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+        
+        <!-- Service  Worker - Also some temporary fixes for Music App -->
+<script>
+     
+      // Eruda Dev Tools Initialization
+      eruda.init();
+
+      // Create a custom Eruda tool for live CSS editing
+      eruda.add({
+        name: "Live CSS",
+        init($el) {
+          $el.html(`
+            <textarea id="liveCssArea" style="width:100%;height:200px;"></textarea>
+            <button id="applyCssBtn">Apply CSS</button>
+          `);
+
+          let styleTag = document.createElement("style");
+          document.head.appendChild(styleTag);
+
+          $el.on("click", "#applyCssBtn", () => {
+            styleTag.innerHTML = document.getElementById("liveCssArea").value;
+          });
+        },
+        show() {},
+        hide() {},
+      });
+    </script>
+
+    </body>
+</html>
